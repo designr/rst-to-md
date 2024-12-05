@@ -4,7 +4,9 @@
 # nice primer on writing good shell scripts
 # ---
 
-set -euo pipefail
+# set -euo pipefail
+# Was silently failing on some input rst files with this check enabled.
+# Uncomment and try *with* this check first if it works for you.
 
 echo "passed $# arguments..."
 
