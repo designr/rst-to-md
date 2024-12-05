@@ -1,0 +1,31 @@
+{
+  "name": "rst-to-md",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "convert": "node convert.js",
+    "bash_convert": "bash convert-to-md",
+    "hey": "echo \"TBD! Just know that this project depends on pandoc\ni.e. it uses pandoc behind the scenes for the bulk of the conversion job.\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com:designr/rst-to-md.git"
+  },
+  "keywords": [
+    "convert",
+    "rst",
+    "to md"
+  ],
+  "author": "Kamal Morjal",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/designr/rst-to-md/issues"
+  },
+  "homepage": "https://github.com/designr/rst-to-md#readme",
+  "description": "",
+  "devDependencies": {
+    "glob": "11.0.0"
+  }
+}
+
