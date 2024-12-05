@@ -1,0 +1,124 @@
+#!/bin/bash
+
+# https://www.baeldung.com/linux/use-command-line-arguments-in-bash-script
+# nice primer on writing good shell scripts
+# ---
+
+set -euo pipefail
+
+echo "passed $# arguments..."
+
+if [[ "$#" -ne 2 ]]; then
+  echo "Usage:"
+  echo "  \$ $0 [source_path] [target_path]"
+  echo "See code in 'convert-to-md' for more."
+  exit 1
+fi
+
+# Define the target directory
+directory="./test-rst" # an artifact from early testing of the script.
+                       # leaving it here for archival and a subtle form of documentation
+                       # of intent
+directory="${1}"
+target_path="${2}"
+filename=""
+
+# Define all metadata keys you care about (tags, category, etc.)
+metadata_keys=("title" "tags" "category" "date" "slug" "description" "author" "location" "mood" "type")
+# modify this list as required, these are the keys that I had in my nikola blog posts
+
+# Check if the target is not a directory
+if [ ! -d "$directory" ]; then
+  exit 1
+fi
+
+# Loop through files in the target directory
+for file in "$directory"/*.rst; do
+  if [ -f "$file" ]; then
+    echo "$file"
+    filename="${file##*/}"    # Strip the path, leaving just "example.rst"
+    base="${filename%.*}"     # Remove the extension, leaving "example"
+
+    # Initialize an empty metadata variable
+    metadata=""
+
+    # Extract metadata lines from the RST file
+    for key in "${metadata_keys[@]}"; do
+      # Find lines starting with .. <key>: and extract the value
+      value=$(grep "^.. $key:" "$file" | sed -E 's/^.. ([^:]+): *(.*)/\2/')
+
+      if [ -z "$value" ]; then
+        value="n/a"
+      fi
+      case "$key" in
+        "category")
+          # Convert category to categories in array format
+          metadata+="categories: [\"$(echo "$value" | sed 's/,\s*/", "/g')\"]"$'\n'
+          # we required this transform specifically to port to hugo,
+          # skip this if you like by commenting out this case
+          ;;
+        "tags")
+          # Convert tags to array format
+          metadata+="tags: [\"$(echo "$value" | sed 's/,\s*/", "/g')\"]"$'\n'
+          ;;
+        "author")
+          # set default author to me
+          # UPDATE THIS TO YOUR AUTHOR NAME
+          value="Kamal Morjal"
+          metadata+="$key: \"$value\""$'\n'
+          ;;
+        *)
+          # Default case for all other metadata keys
+          metadata+="$key: \"$value\""$'\n'
+          ;;
+      esac
+    done
+
+    echo "$metadata"
+
+    # Run pandoc to convert the RST file to Markdown (skip metadata lines)
+    # uses conversion to github flavored markdown. Docs about other options
+    # can be found here: https://pandoc.org/MANUAL.html#option--to
+    echo "You need to have pandoc installed and on your PATH for the next step to work\n"
+    pandoc -f rst -t gfm "$file" > "${target_path}/${base}.md"
+
+    # Add the extracted metadata to the top of the converted Markdown file
+    if [ -n "$metadata" ]; then
+      echo -e "---\n$metadata---" | cat - "${target_path}/${base}.md" > "${target_path}/temp.md" && mv "${target_path}/temp.md" "${target_path}/${base}.md"
+    fi
+
+  fi
+done
+
+    # # Extract metadata and format it as YAML front matter
+    # metadata=$(grep "^.. " "$file" | sed -E 's/^\.\. ([^:]+): *(.*)/\1: "\2"/')
+
+    # # Convert comma-separated tags and categories into arrays
+    # metadata=$(echo "$metadata" | sed -E '/^(tags|category):/ s/: "(.*)"/: [\1]/; s/, /", "/g; s/\[(.*)\]/["\1"]/')
+
+    # echo -e "---\n$metadata\n---" > "./posts/${base}.md"
+
+    # another try with this thing above.
+    # Extract and format metadata as YAML
+    # metadata=$(grep "^.. " "$file" | sed -E '
+    #     # Handle tags field
+    #     /tags:/ {
+    #         s/^.. tags: (.*)/tags: [\1]/;
+    #         s/, /", "/g;
+    #         s/\[([^]]*)\]/["\1"]/
+    #     }
+    #     # Handle category field
+    #     /category:/ {
+    #         s/^.. category: (.*)/category: [\1]/;
+    #         s/, /", "/g;
+    #         s/\[([^]]*)\]/["\1"]/
+    #     }
+    #     # Handle all other fields
+    #     /^[^tags|category]:/ s/^\.\. ([^:]+): *(.*)/\1: "\2"/
+    # ')
+
+
+    # Append the Pandoc-converted Markdown content (excluding metadata)
+    # sed '/^.. /d' "$file" | pandoc -f rst -t markdown >> "./posts/${base}.md"
+
+    # pandoc -f rst -t markdown_github "$file" -o "./${base}.md"
