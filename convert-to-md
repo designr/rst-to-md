@@ -17,6 +17,12 @@ if [[ "$#" -ne 2 ]]; then
   exit 1
 fi
 
+if ! command -v pandoc 2>&1 >/dev/null
+then
+    echo "pandoc could not be found. You need to have pandoc installed for this script to work."
+    exit 1
+fi
+
 # Define the target directory
 directory="./test-rst" # an artifact from early testing of the script.
                        # leaving it here for archival and a subtle form of documentation
@@ -81,7 +87,7 @@ for file in "$directory"/*.rst; do
     # Run pandoc to convert the RST file to Markdown (skip metadata lines)
     # uses conversion to github flavored markdown. Docs about other options
     # can be found here: https://pandoc.org/MANUAL.html#option--to
-    echo "You need to have pandoc installed and on your PATH for the next step to work\n"
+    mkdir -p ${target_path} &&
     pandoc -f rst -t gfm "$file" > "${target_path}/${base}.md"
 
     # Add the extracted metadata to the top of the converted Markdown file
