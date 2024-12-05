@@ -99,21 +99,6 @@ async function convertRstToMd(sourcePath, targetPath) {
     fs.mkdirSync(targetPath, { recursive: true });
   }
 
-  // Find all .rst files in the source directory
-  // glob(`${sourcePath}/*.rst`, (err, files) => {
-  //   if (err) {
-  //     console.error('Error reading RST files:', err);
-  //     return;
-  //   }
-
-  //   files.forEach((file) => {
-  //     console.log(`processing file: ${file}`)
-  //     processFile(file, targetPath);
-  //   });
-  // });
-  // ^ this might have worked upto glob v8; it doesn't after
-  // a major refactor. Please see their version history and docs.
-
   let files = await glob(`${sourcePath}/*.rst`, {})
   files.forEach((file) => {
     console.log(`processing file: ${file}`)

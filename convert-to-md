@@ -89,36 +89,3 @@ for file in "$directory"/*.rst; do
 
   fi
 done
-
-    # # Extract metadata and format it as YAML front matter
-    # metadata=$(grep "^.. " "$file" | sed -E 's/^\.\. ([^:]+): *(.*)/\1: "\2"/')
-
-    # # Convert comma-separated tags and categories into arrays
-    # metadata=$(echo "$metadata" | sed -E '/^(tags|category):/ s/: "(.*)"/: [\1]/; s/, /", "/g; s/\[(.*)\]/["\1"]/')
-
-    # echo -e "---\n$metadata\n---" > "./posts/${base}.md"
-
-    # another try with this thing above.
-    # Extract and format metadata as YAML
-    # metadata=$(grep "^.. " "$file" | sed -E '
-    #     # Handle tags field
-    #     /tags:/ {
-    #         s/^.. tags: (.*)/tags: [\1]/;
-    #         s/, /", "/g;
-    #         s/\[([^]]*)\]/["\1"]/
-    #     }
-    #     # Handle category field
-    #     /category:/ {
-    #         s/^.. category: (.*)/category: [\1]/;
-    #         s/, /", "/g;
-    #         s/\[([^]]*)\]/["\1"]/
-    #     }
-    #     # Handle all other fields
-    #     /^[^tags|category]:/ s/^\.\. ([^:]+): *(.*)/\1: "\2"/
-    # ')
-
-
-    # Append the Pandoc-converted Markdown content (excluding metadata)
-    # sed '/^.. /d' "$file" | pandoc -f rst -t markdown >> "./posts/${base}.md"
-
-    # pandoc -f rst -t markdown_github "$file" -o "./${base}.md"
