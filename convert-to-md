@@ -56,14 +56,14 @@ for file in "$directory"/*.rst; do
       value=$(grep "^.. $key:" "$file" | sed -E 's/^.. ([^:]+): *(.*)/\2/')
 
       if [ -z "$value" ]; then
-        value="n/a"
+        value="none"
       fi
       case "$key" in
         "category")
           # Convert category to categories in array format
           metadata+="categories: [\"$(echo "$value" | sed 's/,\s*/", "/g')\"]"$'\n'
           # we required this transform specifically to port to hugo,
-          # skip this if you like by commenting out this case
+          # comment out if you don't need this
           ;;
         "tags")
           # Convert tags to array format

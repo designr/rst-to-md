@@ -45,7 +45,7 @@ function processFile(filePath, targetPath) {
 
       // Handle default values or empty metadata
       if (!value) {
-        value = 'n/a';
+        value = 'none';
       }
 
       // Special handling for 'author'
