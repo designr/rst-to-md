@@ -1,6 +1,6 @@
 # rst to md
 
-**`rst-to-md` is a bunch of scripts that help you convert rst files to md.**
+**`rst-to-md` is a bunch of scripts that help me convert my Nikola blog data (rst files) to Hugo blog data (md files) along with the metadata in frontmatter.**
 
 ## TL;DR
 
@@ -20,68 +20,76 @@ pnpm convert input_dir output_dir
 ```
 where `input_dir` should contain your `rst` files and `output_dir` will contain newly created `md` files.
 
-NOTE: This must be full of bugs in real world scenarios different from mine. For one, it has only been tested with a flat list of files inside `input_dir`; no nesting. If you use this and find it helpful, and want to contribute a [bug report or feature request](https://github.com/designr/rst-to-md/issues), or [a PR](https://github.com/designr/rst-to-md/pulls), feel free to do so.
+It currently only works for a flat list of files because that's all we needed.
+
+NOTE: This is probably full of bugs in real world scenarios different from mine.
+
+If you use this and find it helpful, and want to request or add features/improvements: you're welcome to open a [bug report or feature request](https://github.com/designr/rst-to-md/issues), or [a PR](https://github.com/designr/rst-to-md/pulls).
 
 ---
 
-## Want to waste some time? Read on...
+## depends on `pandoc`
 
-Most of the heavy lifting of the transformation from `rst` to `md` is
-handled by pandoc; so you need to have pandoc installed on your system
-and on your system PATH.
+The  `rst` to `md` conversion is handled by `pandoc`; but pandoc does not translate the frontmatter,
+in fact it just drops all the frontmatter in my rst files during this conversion. Hence this script.
 
-This is just a wrapper script around `pandoc`.
+To use either of bash script or the JS script in this project,
+you need to have pandoc installed on your system, and on your system PATH.
 
-## specific need
+## Tools you can directly use to convert your `rst` files to `md`
 
-**Why this when we have tools like `pandoc` and https://cloudconvert.com/rst-to-md ?**
+- `pandoc`
+- https://cloudconvert.com/rst-to-md
 
-  `pandoc` it is; and it does a wonderful job of converting rst files to md.
+  However, these would indiscriminately strip all the metadata such as front-matter
+  directives, for example in rst files used for a Nikola blog.
 
-  I needed to convert my Nikola blog data to be ported to a `md` based static
-  site generator `hugo`, and `pandoc` would indiscriminately strip all the metadata
-  from my posts. Thus this tool to preserve and properly convert the medadata as frontmatter
-  for the md files.
+  Thus this tool to preserve and properly convert the medadata as frontmatter
+  for the md files. You may need to modify the scripts to your specific needs.
 
   That's all these scripts do - convert the front-matter directives in `rst` files to
   `yaml` front-matter for the `md` files and append the `pandoc` output to it to create
-  the new md files to be fed into another SSG.
+  the new md files.
 
-  I needed this specifically to port a blog from `Nikola` to `Hugo`.
+  I needed this specifically to move my blog - `Nikola` -> `Hugo`.
 
 ## Usage
 
-This project uses `pnpm` for its speed and efficiency, but also works with `npm`.
-Use either of the one throughout, do not switch in between.
+This project uses `pnpm`, but also works with `npm`.
 
-To run the JS version of the script:
+Since this was a trial to see what works best, there is a JS script, and a bash script -
+both perform the same operation. Considering you'd most likely need to modify them in
+some way, pick what's most convenient for you.
+
+### JS script
 
 ```
 $ pnpm run convert test-data/rst output
 # `pnpm convert` also works
-# because pnpm converts all scripts to commands
-# by default
 ```
-or
+
+or, if you're using npm:
+
 ```
 $ npm run convert test-data/rst output
 ```
-If unclear, just run `pnpm convert` or `npm run convert` or `pnpm bash_convert` to see usage help.
 
-To run the bash script, do one of:
+### bash script
+
 ```
 bash ./convert-to-md test-data/rst output
 
-# or it could be
-# bash ./convert-to-md test-data/rst test-data/md
-# where `md` will be created and all output md files
-# will be dumped there.
+# the name 'output' is arbitrary; you may use any valid dir name/path here.
 ```
-or
+
+or, it can also be invoked from the package.json `script` commands
+for your chosen package manager like so:
+
 ```
 $ pnpm bash_convert test-data/rst output
 ```
 or
+
 ```
 $ npm run bash_convert test-data/rst output
 ```
@@ -90,20 +98,11 @@ This will exit with error if source dir `test-data/rst` is not present.
 This will output `md` files in `output/` if it exists; or create `output/`
 if it doesn't already exist,
 
-**I started with npm, but want to try out pnpm (or vice-versa). What do?**
+## Possible improvements
 
-Just start over. Just remove the `node_modules/` directory and the lock file (`package-lock.json` | `pnpm-lock.yaml`) created by your
-package manager (`npm` | `pnpm`); and use the tool you like.
-
-## I need another feature...
-
-  Please feel free to post an issue or fork and use it however you see fit. Would be great
-  if you're adding tested features and could open a pull request.
-  I'll try my best to review and merge asap.
-
-## What's all the fuss with all those options?
-
-Nothing. I am just having fun.
+- Allow adding metadata_keys of interest via external text file with list of words, one per line
+- Add a better, less coupled, system for key transformations as in category->categories in this case
+- [Your improvement suggestion here](https://github.com/designr/rst-to-md/issues/new)...
 
 ## license
 
