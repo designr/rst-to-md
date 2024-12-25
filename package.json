@@ -5,7 +5,7 @@
   "scripts": {
     "convert": "node convert.js",
     "bash_convert": "bash convert-to-md",
-    "hey": "echo \"TBD! Just know that this project depends on pandoc\ni.e. it uses pandoc behind the scenes for the bulk of the conversion job.\n\nTo read me: $ pnpm readme\nTo run JS script: $ pnpm convert\nTo run bash script: $ pnpm bash_convert\n\" && exit 0",
+    "hey": "node help.js",
     "readme": "cat README.md",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
